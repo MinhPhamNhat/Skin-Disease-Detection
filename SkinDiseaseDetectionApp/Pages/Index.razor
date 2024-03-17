@@ -1,0 +1,105 @@
+﻿@page "/"
+
+<PageTitle>Home</PageTitle>
+
+<div class="home-component d-flex-vertical gap-4">
+    <h1 style="font-weight: 600; text-align: center;">
+        Chuẩn đoán bệnh về da
+    </h1>
+
+    <div class="d-flex-vertical gap-2">
+        <MudText Style="font-size: 12px; color: #7E99B4" Align="Align.Center">Tải ảnh của bạn lên đây để có thể chuẩn
+            bệnh về da của
+            bạn.
+            Ảnh nên rõ ràng, có kích thước 512x512 và định dạng PNG hoặc JPG </MudText>
+        <div class="d-flex gap-3 justify-center align-center">
+            <MudStack Class="photo-camera" Style="width: 100%; max-width: 600px;">
+                <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles Hidden="@false" Accept=".png, .jpg"
+                    InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0">
+                    <ButtonTemplate>
+                        <MudPaper Style="background-color: #fafafa9d; color: #BFCCD9; border: dashed 2px #BFCCD9"
+                            Height="100px" Outlined="true"
+                            Class="relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full z-10">
+                            <div class="d-flex-vertical align-center justify-center h-100 w-100">
+                                <MudIcon Style="color: #7E99B4;" Icon="@Icons.Material.Filled.PhotoCamera" />
+                                <MudText Style="font-size: 12px;" Align="Align.Center" Typo="Typo.h6">
+                                    Chụp ảnh
+                                </MudText>
+                            </div>
+                        </MudPaper>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudStack>
+            <MudStack Class="file-upload" Style="width: 100%; max-width: 600px;">
+                <MudFileUpload T="IReadOnlyList<IBrowserFile>" AppendMultipleFiles Hidden="@false" Accept=".png, .jpg"
+                    InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0">
+                    <ButtonTemplate>
+                        <MudPaper Style="background-color: #fafafa9d; color: #BFCCD9; border: dashed 2px #BFCCD9"
+                            Height="300px" Outlined="true"
+                            Class="relative rounded-lg border-2 border-dashed pa-4 mud-width-full mud-height-full z-10">
+                            <div class="d-flex-vertical align-center justify-center h-100 w-100">
+                                <MudIcon Style="color: #7E99B4;" Icon="@Icons.Material.Filled.FileUpload" />
+                                <MudText Style="font-size: 12px;" Align="Align.Center" Typo="Typo.h6">
+                                    Tải ảnh lên
+                                </MudText>
+                            </div>
+                        </MudPaper>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            </MudStack>
+        </div>
+    </div>
+    <div class="d-flex justify-center w-100">
+        <MudButton Variant="Variant.Filled" ButtonType="ButtonType.Submit" Color="Color.Primary" DisableElevation>Chuẩn đoán</MudButton>
+    </div>
+    @if (IsFactLoading)
+    {
+        <div>
+            <MudSkeleton />
+            <MudSkeleton />
+            <MudSkeleton />
+        </div>
+    }
+    else
+    {
+        <div class="d-flex justify-center">
+            <MudText Style="font-size: 12px;" Class="d-flex align-center" Typo="Typo.caption">
+                <i>Fact: @Fact</i>
+            </MudText>
+            <MudIconButton Style="font-size: 12px;" Icon="@Icons.Material.Filled.Refresh" Variant="Variant.Text"
+                Size="Size.Small" Color="Color.Secondary" OnClick="generateFact">
+            </MudIconButton>
+
+        </div>
+    }
+
+    <div>
+        <hr style="border-width: 2px;" />
+        <MudExpansionPanels MultiExpansion="true">
+            <MudExpansionPanel Text="@SkinDiseasesDictionary[SelectedDiseaseKey]">
+                @if (!string.IsNullOrEmpty(Overview))
+                {
+                    <MudText Style="font-size: 12px;" Class="d-flex align-center" Typo="Typo.caption">
+                        <i>Thông tin dưới đây do <a style="text-decoration: underline; color: rgb(0, 102, 255);" href="https://gemini.google.com/">Gemini</a> tự động tổng hợp và chỉ
+                            mang
+                            tính chất tham khảo. Để có được thông tin chính xác nhất, vui lòng liên hệ với bác sĩ chuyên
+                            khoa để
+                            được tư vấn cụ thể.</i>
+                    </MudText>
+                }
+                <hr />
+                @if (!string.IsNullOrEmpty(Overview))
+                {
+                    <MudMarkdown Value="@Overview" />
+                }
+            </MudExpansionPanel>
+            <MudExpansionPanel Text="Report">
+                <hr />
+                <MudChart ChartType="ChartType.Bar" ChartSeries="@Series" XAxisLabels="@XAxisLabels"
+                    Height="350px">
+                </MudChart>
+            </MudExpansionPanel>
+        </MudExpansionPanels>
+    </div>
+
+</div>

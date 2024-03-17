@@ -1,0 +1,18 @@
+﻿@inherits LayoutComponentBase
+
+<div class="page">
+    <header class="top-row">
+        <div class="h-100 d-flex gap-16 justify-center align-center">
+            <MudButton Href="/">Trang chủ</MudButton>
+            <MudButton Href="/Information">Các bệnh về da</MudButton>
+            <MudButton>Liên hệ bác sĩ</MudButton>
+        </div>
+    </header>
+    <main>
+        <img src="header-bg.png" class="bg-img" />
+        <div class="main">
+            @Body
+        </div>
+        <div></div>
+    </main>
+</div>

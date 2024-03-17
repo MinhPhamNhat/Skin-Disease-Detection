@@ -1,0 +1,20 @@
+@page "/Information"
+
+<MudExpansionPanels MultiExpansion="true">
+    @foreach (var skinDisease in SkinDiseases)
+    {
+        <MudExpansionPanel Text="@skinDisease.Value">
+            <hr />
+            @if (!DiseaseState[skinDisease.Key].Item1)
+            {
+                <MudSkeleton />
+                <MudSkeleton />
+                <MudSkeleton />
+            }
+            else
+            {
+                <MudMarkdown Value="@DiseaseState[skinDisease.Key].Item2" />
+            }
+        </MudExpansionPanel>
+    }
+</MudExpansionPanels>

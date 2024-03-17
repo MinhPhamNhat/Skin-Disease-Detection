@@ -1,0 +1,38 @@
+.home-component {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 60px;
+    height: 100vh;
+}
+
+::deep .photo-camera { 
+    display: none !important;
+}
+
+::deep .mud-button-filled-primary {
+    background-color: #222E3A !important;
+    color: white !important;
+    border-radius: 5px;
+    padding: 16px 32px 16px 32px;
+}
+
+h1{
+margin-top: 60px;
+}
+
+@media (max-width: 640.98px) {
+    .home-component {
+        width: 100%;
+        padding: 16px;
+        height: 100vh;
+    }
+
+    ::deep .photo-camera { 
+        display: block !important;
+    }
+
+    ::deep .mud-paper{
+        height: 100px !important;
+    }
+}
