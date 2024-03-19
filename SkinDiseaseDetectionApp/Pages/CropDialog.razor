@@ -1,0 +1,68 @@
+@using Cropper.Blazor.Components
+@using MudBlazor;
+@using Cropper.Blazor.Models;
+
+<MudDialog>
+    <DialogContent>
+        <div class="dialog-cropper">
+            <CropperComponent Class="cropper-example" Src="@Base64Image" @ref="CropperComponent" Options="@cropperOptions"/>
+        </div>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Hủy</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Xác nhận</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Microsoft.AspNetCore.Components.Forms.IBrowserFile File { get; set; }
+
+    private string Base64Image { get; set; }
+
+    private CropperComponent CropperComponent { get; set; }
+    private Options cropperOptions = new Options
+        {
+            AspectRatio = (decimal)4 / 3,
+            ViewMode = ViewMode.Vm2,
+        };
+    protected override async Task OnInitializedAsync()
+    {
+        Base64Image = await ConvertToBase64(File);
+    }
+
+    void Cancel() => MudDialog.Cancel();
+
+    private async Task Submit()
+    {
+        GetCroppedCanvasOptions getCroppedCanvasOptions = new GetCroppedCanvasOptions
+            {
+                ImageSmoothingQuality = "high"
+            };
+
+        var cropImage = await CropperComponent.GetCroppedCanvasDataURLAsync(getCroppedCanvasOptions);
+        MudDialog.Close(DialogResult.Ok(cropImage));
+    }
+
+    public static byte[] GetBytes(Stream stream)
+    {
+        var bytes = new byte[stream.Length];
+        stream.Seek(0, SeekOrigin.Begin);
+        stream.ReadAsync(bytes, 0, bytes.Length);
+        stream.Dispose();
+        return bytes;
+    }
+
+    private async Task<string> ConvertToBase64(Microsoft.AspNetCore.Components.Forms.IBrowserFile file)
+    {
+        string base64String = "";
+
+        await using MemoryStream fs = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(fs);
+        byte[] somBytes = GetBytes(fs);
+        base64String = Convert.ToBase64String(somBytes, 0, somBytes.Length);
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+        return $"data:image/jpeg;base64,{base64String}";
+    }
+}

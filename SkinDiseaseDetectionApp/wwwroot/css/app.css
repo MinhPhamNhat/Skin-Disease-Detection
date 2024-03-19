@@ -122,3 +122,14 @@ a,
 .mud-expand-panel-text {
     font-size: 24px;
 }
+
+.mud-dialog {
+    height: fit-content !important;
+    width: fit-content !important;
+}
+
+.dialog-cropper {
+    overflow: scroll;
+    height: 500px !important;
+    width: 500px !important;
+}

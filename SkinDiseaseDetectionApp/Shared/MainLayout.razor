@@ -1,10 +1,17 @@
 ﻿@inherits LayoutComponentBase
+@using MudBlazor;
+@using Microsoft.JSInterop;
+@inject IJSRuntime _jSRuntime
+
+<MudDialogProvider />
+<MudSnackbarProvider/>
+<MudThemeProvider />
 
 <div class="page">
     <header class="top-row">
         <div class="h-100 d-flex gap-16 justify-center align-center">
             <MudButton Href="/">Trang chủ</MudButton>
-            <MudButton Href="/Information">Các bệnh về da</MudButton>
+            <MudButton Href="/history">Lịch sử bệnh</MudButton>
             <MudButton>Liên hệ bác sĩ</MudButton>
         </div>
     </header>
@@ -15,4 +22,46 @@
         </div>
         <div></div>
     </main>
+    <MudAlert Class="w-100" Severity="Severity.Normal">
+        @if (IsFactLoading)
+        {
+            <div class="d-flex w-100">
+                <MudSkeleton Class="w-100" />
+            </div>
+        }
+        else
+        {
+            <div class="d-flex justify-space-between w-100">
+                <MudText Style="font-size: 12px;" Class="d-flex align-center" Typo="Typo.caption">
+                    <i>Fact: @Fact</i>
+                </MudText>
+                <MudIconButton Style="font-size: 12px;" Icon="@Icons.Material.Filled.Refresh" Variant="Variant.Text"
+                    Size="Size.Small" Color="Color.Secondary" OnClick="generateFact">
+                </MudIconButton>
+            </div>
+        }
+    </MudAlert>
 </div>
+
+
+@code{
+    public bool IsFactLoading { get; set; }
+    public string Fact { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await generateFact();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+    private async Task generateFact()
+    {
+        IsFactLoading = true;
+        Fact = await _jSRuntime.InvokeAsync<string>("generateContent", Constants.Prompt.Fact);
+        IsFactLoading = false;
+        StateHasChanged();
+    }
+    
+}

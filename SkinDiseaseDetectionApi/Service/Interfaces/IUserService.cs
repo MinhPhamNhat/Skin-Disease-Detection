@@ -6,5 +6,6 @@ namespace SkinDiseaseDetectionApi.Service.Interfaces
         Task<User> GetUserById(int id);
         Task<bool> RegisterUser(UserDto user);
         Task<User> UpdateUser(User user);
+        Task<UserDetail> GetUserDetail(string userId);
     }
 }

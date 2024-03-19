@@ -49,4 +49,8 @@ public class UserService : IUserService
         return user;
     }
 
+    public Task<UserDetail> GetUserDetail(string userId)
+    {
+        return _mongoDBService.FirstOrDefaultAsync<UserDetail>(x => x.UserId == userId);
+    }
 }

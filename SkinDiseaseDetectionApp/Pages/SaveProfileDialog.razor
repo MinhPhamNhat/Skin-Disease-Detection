@@ -1,0 +1,68 @@
+@using Cropper.Blazor.Components
+@using MudBlazor;
+@using Cropper.Blazor.Models;
+
+<MudDialog>
+    <DialogContent>
+        <MudForm>
+            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="@UserDetail.Fullname" T="string" Label="Họ và tên" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudDatePicker @bind-Value="@UserDetail.DateOfBirth" Label="Ngày sinh" />
+                </MudItem>
+            </MudGrid>
+
+            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="@UserDetail.Address" T="string" Label="Địa chỉ" />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudRadioGroup @bind-Value="UserDetail.Gender" T="bool">
+                        <MudRadio Value="true" Color="Color.Primary">Nam</MudRadio>
+                        <MudRadio Value="false" Color="Color.Primary">Nữ</MudRadio>
+                    </MudRadioGroup>
+                </MudItem>
+            </MudGrid>
+            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
+                <MudItem xs="12" sm="6">
+                    <MudTextField @bind-Value="UserDetail.Email" Mask="@RegexMask.Email()" Label="Email Address" T="string"
+                        HelperText="@RegexMask.Email().Mask" Variant="@Variant.Text" Clearable />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudNumericField @bind-Value="UserDetail.PhoneNumber" T="int?" Label="Số điện thoại" Adornment="Adornment.Start" AdornmentText="+84"
+                        Clearable HideSpinButtons="true" />
+                </MudItem>
+            </MudGrid>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="SubmitAndSendResult">Lưu kết quả và liên hệ</MudButton>
+        <MudButton Color="Color.Primary" OnClick="Submit">Lưu kết quả</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public Microsoft.AspNetCore.Components.Forms.IBrowserFile File { get; set; }
+    [Inject] public Services.Interfaces.IUserService userService { get; set; }
+
+    private UserDetailDto UserDetail { get; set; } = new UserDetailDto();
+
+    protected override async Task OnInitializedAsync()
+    {
+        UserDetail = await userService.GetUserDetail("");
+    }
+
+    public async Task SubmitAndSendResult()
+    {
+        UserDetail = await userService.GetUserDetail("");
+    }
+
+    public async Task Submit()
+    {
+        UserDetail = await userService.GetUserDetail("");
+    }
+}

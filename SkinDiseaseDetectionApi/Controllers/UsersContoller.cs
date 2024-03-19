@@ -20,7 +20,7 @@ public class UsersController : ControllerBase
         if (token == null)
             return Unauthorized();
 
-        return Ok(new { token });
+        return Ok(token);
     }
 
     [HttpPost("register")]
@@ -32,5 +32,12 @@ public class UsersController : ControllerBase
             return BadRequest("Failed to register user.");
 
         return Ok("User registered successfully.");
+    }
+
+    [HttpGet("get_user_dedtails/{userId}")]
+    public async Task<ActionResult<UserDetail>> GetUserDetail(string userId)
+    {
+        var result = await _userService.GetUserDetail(userId);
+        return Ok(result);
     }
 }
