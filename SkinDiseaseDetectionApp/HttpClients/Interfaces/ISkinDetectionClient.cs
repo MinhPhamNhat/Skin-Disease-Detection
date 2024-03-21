@@ -6,6 +6,7 @@ namespace SkinDiseaseDetectionApp.HttpClients.Interfaces
     {
         Task<TResponse> Get<TResponse>(string endpoint);
         Task<TResponse> Post<TResponse>(string endpoint, Dictionary<string, string> request);
+        Task<string> Post(string endpoint, Dictionary<string, string> request);
         Task<TResponse> Put<TRequest, TResponse>(string endpoint, TRequest request);
         Task Delete(string endpoint);
     }

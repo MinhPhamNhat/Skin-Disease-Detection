@@ -19,7 +19,7 @@
                     <MudTextField @bind-Value="@UserDetail.Address" T="string" Label="Địa chỉ" />
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudRadioGroup @bind-Value="UserDetail.Gender" T="bool">
+                    <MudRadioGroup @bind-Value="@UserDetail.Gender" T="bool">
                         <MudRadio Value="true" Color="Color.Primary">Nam</MudRadio>
                         <MudRadio Value="false" Color="Color.Primary">Nữ</MudRadio>
                     </MudRadioGroup>
@@ -31,38 +31,65 @@
                         HelperText="@RegexMask.Email().Mask" Variant="@Variant.Text" Clearable />
                 </MudItem>
                 <MudItem xs="12" sm="6">
-                    <MudNumericField @bind-Value="UserDetail.PhoneNumber" T="int?" Label="Số điện thoại" Adornment="Adornment.Start" AdornmentText="+84"
+                    <MudTextField @bind-Value="UserDetail.PhoneNumber" T="string" Label="Số điện thoại" Adornment="Adornment.Start" AdornmentText="+84"
                         Clearable HideSpinButtons="true" />
                 </MudItem>
             </MudGrid>
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="SubmitAndSendResult">Lưu kết quả và liên hệ</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Lưu kết quả</MudButton>
+        <MudButton>Lưu kết quả và liên hệ</MudButton>
+        <MudButton OnClick="Save" Color="Color.Primary">Lưu kết quả</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    [Parameter] public Microsoft.AspNetCore.Components.Forms.IBrowserFile File { get; set; }
+    [Parameter] public string Image { get; set; }
+    [Parameter] public string DiagnoseResult { get; set; }
+    [Parameter] public double DiagnoseResultAccuracy { get; set; }
+
     [Inject] public Services.Interfaces.IUserService userService { get; set; }
 
-    private UserDetailDto UserDetail { get; set; } = new UserDetailDto();
+    private UserDetailDto? UserDetail { get; set; } = new UserDetailDto();
 
     protected override async Task OnInitializedAsync()
     {
-        UserDetail = await userService.GetUserDetail("");
+        var userId = await userService.GetUserId();
+        UserDetail = await userService.GetUserDetail();
+        if (UserDetail == null){
+            UserDetail = new UserDetailDto()
+            {
+                Address ="",
+                DateOfBirth = DateTime.Now,
+                Email = "",
+                Fullname = "",
+                Gender = false,
+                PhoneNumber = "",
+                UserId = userId
+            };
+        }
     }
 
-    public async Task SubmitAndSendResult()
+    private async Task Save()
     {
-        UserDetail = await userService.GetUserDetail("");
-    }
+        var userHistory = new UserHistory
+        {
+            DiagnoseResult = DiagnoseResult,
+            DiagnoseResultAccuracy = DiagnoseResultAccuracy,
+            Image = Image,
+            DateCreated = DateTime.Now,
+            Address = UserDetail.Address,
+            DateOfBirth = UserDetail.DateOfBirth.GetValueOrDefault(),
+            Email = UserDetail.Email,
+            FullName = UserDetail.Fullname,
+            Gender = UserDetail.Gender,
+            PhoneNumber = UserDetail.PhoneNumber,
+            UserId = UserDetail.UserId,
+        };
 
-    public async Task Submit()
-    {
-        UserDetail = await userService.GetUserDetail("");
+        await userService.SaveUserDetail(userHistory);
+        MudDialog.Close(DialogResult.Ok(true));
     }
 }

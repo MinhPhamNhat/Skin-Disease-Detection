@@ -4,16 +4,33 @@
 @inject IJSRuntime _jSRuntime
 
 <MudDialogProvider />
-<MudSnackbarProvider/>
+<MudSnackbarProvider />
 <MudThemeProvider />
 
 <div class="page">
     <header class="top-row">
         <div class="h-100 d-flex gap-16 justify-center align-center">
             <MudButton Href="/">Trang chủ</MudButton>
-            <MudButton Href="/history">Lịch sử bệnh</MudButton>
-            <MudButton>Liên hệ bác sĩ</MudButton>
+            @if (IsLogined)
+            {
+                <MudButton Href="/history">Lịch sử bệnh</MudButton>
+            }
+            else
+            {
+                <MudButton Href="/login">Đăng nhập</MudButton>
+                <MudButton Href="/register">Đăng ký</MudButton>
+            }
         </div>
+
+        @if (IsLogined)
+        {
+            <div class="logined">
+                <MudButton OnClick="LogOut">Đăng xuất</MudButton> <span>|</span> <span>@User?.Fullname</span>
+            </div>
+        }
+        else
+        {
+        }
     </header>
     <main>
         <img src="header-bg.png" class="bg-img" />
@@ -22,7 +39,7 @@
         </div>
         <div></div>
     </main>
-    <MudAlert Class="w-100" Severity="Severity.Normal">
+    @* <MudAlert Class="w-100 fact-component" Severity="Severity.Normal">
         @if (IsFactLoading)
         {
             <div class="d-flex w-100">
@@ -40,22 +57,47 @@
                 </MudIconButton>
             </div>
         }
-    </MudAlert>
+    </MudAlert> *@
 </div>
 
 
-@code{
+@code {
     public bool IsFactLoading { get; set; }
     public string Fact { get; set; }
+    public bool IsLogined { get; set; }
+    public UserDetailDto User { get; set; }
 
+    [Inject] public Services.Interfaces.IUserService userService { get; set; }
+    [Inject] public NavigationManager _navigationManager { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await userService.GetUserDetail();
+        if (User != null)
+        {
+            IsLogined = true;
+        }
+        else
+        {
+            IsLogined = false;
+        }
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        @* if (firstRender)
         {
             await generateFact();
-        }
+        } *@
         await base.OnAfterRenderAsync(firstRender);
     }
+
+    private async Task LogOut()
+    {
+        await _jSRuntime.InvokeVoidAsync("localStorage.removeItem", "userId");
+        IsLogined = false;
+        _navigationManager.NavigateTo("/", forceLoad: true);
+    }
+
     private async Task generateFact()
     {
         IsFactLoading = true;
@@ -63,5 +105,10 @@
         IsFactLoading = false;
         StateHasChanged();
     }
-    
+
+    private async Task OnLogin()
+    {
+        StateHasChanged();
+    }
+
 }

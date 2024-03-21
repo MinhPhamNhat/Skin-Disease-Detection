@@ -6,6 +6,7 @@ using MudBlazor.Services;
 using SkinDiseaseDetectionApp;
 using SkinDiseaseDetectionApp.HttpClients;
 using SkinDiseaseDetectionApp.HttpClients.Interfaces;
+using SkinDiseaseDetectionApp.Services.Interfaces;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -14,6 +15,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
 builder.Services.AddMudMarkdownServices();
 builder.Services.AddScoped<ISkinDetectionClient, SkinDetectionClient>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddHttpClient("SkinDetectionClient", httpClient =>
 {

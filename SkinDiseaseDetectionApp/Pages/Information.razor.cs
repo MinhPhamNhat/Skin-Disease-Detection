@@ -19,15 +19,6 @@ public partial class Information
         base.OnInitialized();
     }
 
-    protected override Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Task.WaitAll(SkinDiseases.Select(x => x.Key).Select(x => getOverview(x)).ToArray());
-        }
-        return base.OnAfterRenderAsync(firstRender);
-    }
-
     private async Task getOverview(string key)
     {
         var overview = await _jSRuntime.InvokeAsync<string>("generateContent", Prompt.Overview(SkinDiseases[key]));

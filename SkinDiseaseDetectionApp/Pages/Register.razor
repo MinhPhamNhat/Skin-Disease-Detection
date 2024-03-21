@@ -1,0 +1,31 @@
+@page "/register"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using MudBlazor
+
+<div class="h-100 w-100 d-flex flex-column gap-5 justify-center align-center">
+    <h1>Đăng ký</h1>
+    <MudGrid Justify="Justify.Center" Style="width: 50%">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string" @bind-Value="@user.FullName" Label="Họ và tên" Required="true" RequiredError="Vui lòng nhập họ và tên" />
+                    <MudTextField T="string" @bind-Value="@user.Email" Label="Email" Required="true" RequiredError="Vui lòng nhập Email"
+                        Validation="@(new EmailAddressAttribute() {ErrorMessage = "Mail không hợp lệ"})" />
+                    <MudTextField T="string" @bind-Value="@user.Password" Label="Mật khẩu" HelperText="Vui lòng nhâp mật khẩu" @ref="pwField1"
+                        InputType="InputType.Password"
+                        Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                        RequiredError="Vui lòng nhập mật khẩu" />
+                    <MudTextField T="string" Label="Nhập lại mật khẩu" HelperText="Vui lòng nhâp lại mật khẩu"
+                        InputType="InputType.Password" Validation="@(new Func<string, string>(PasswordMatch))" />
+                    <div class="d-flex align-center justify-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnRegister" Disabled="@(!success)">Đăng ký</MudButton>
+                    </div>
+                    <MudText Style="font-size: 12px;" Class="d-flex justify-center" Typo="Typo.caption">
+                       <i>Đã có tài khoản? <a style="text-decoration: underline; color: rgb(0, 102, 255);" href="/login">Đăng nhập</a>.</i>
+                    </MudText>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</div>

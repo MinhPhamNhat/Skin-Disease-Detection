@@ -1,5 +1,26 @@
 @page "/login"
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using MudBlazor
 
-<div class="h-100 w-100 d-flex justofy-center align-center">
-
+<div class="h-100 w-100 d-flex flex-column gap-5 justify-center align-center">
+    <h1>Đăng nhập</h1>
+    <MudGrid Justify="Justify.Center" Style="width: 50%">
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+                    <MudTextField T="string" @bind-Value="@Email" Label="Email" Required="true" RequiredError="Vui lòng nhập Email" />
+                    <MudTextField T="string" @bind-Value="@Password" Label="Mật khẩu" HelperText="Vui lòng nhâp mật khẩu" @ref="pwField1"
+                        InputType="InputType.Password" Required="true"
+                        RequiredError="Vui lòng nhập mập khẩu" />
+                    <div class="d-flex align-center justify-center">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OnLogin" Disabled="@(!success)">Đăng nhập</MudButton>
+                    </div>
+                    <MudText Style="font-size: 12px;" Class="d-flex justify-center" Typo="Typo.caption">
+                       <i>Bạn chưa có tài khoản? <a style="text-decoration: underline; color: rgb(0, 102, 255);" href="/register">Đăng ký</a>.</i>
+                    </MudText>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
 </div>

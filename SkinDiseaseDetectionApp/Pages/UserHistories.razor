@@ -1,0 +1,33 @@
+@page "/history"
+@using MudBlazor
+
+@if (_UserHistories.Any())
+{
+    <MudExpansionPanels MultiExpansion="true" Class="w-100">
+        @foreach (var history in _UserHistories)
+        {
+            <MudExpansionPanel Class="w-100" Text="@($"{history.FullName} | {history.DateCreated.ToString()}")" IsInitiallyExpanded="true">
+                <MudCard>
+                    <MudCardContent>
+                        <MudText Typo="Typo.body1">Giới tính: @(history.Gender ? "Nam" : "Nữ") </MudText>
+                        <MudText Typo="Typo.body1">Ngày sinh: @(history.DateOfBirth.ToString("dd-MM-yyyy"))</MudText>
+                        <MudText Typo="Typo.body1">Địa chỉ: @(history.Address)</MudText>
+                        <MudText Typo="Typo.body1">Email: @(history.Email)</MudText>
+                        <MudText Typo="Typo.body1">Số điện thoại: +84 @(history.PhoneNumber)</MudText>
+                    </MudCardContent>
+                    <h5>Chuẩn đoán:</h5>
+                    <MudCardContent>
+                        <img src="@history.Image" alt="@history.FullName" height="100" />
+                        <MudText Typo="Typo.h6">@SkinDiseasesDictionary[history.DiagnoseResult]</MudText>
+                        <MudText Typo="Typo.body2">@(double.Round(history.DiagnoseResultAccuracy * 100, 2))%</MudText>
+                    </MudCardContent>
+                </MudCard>
+            </MudExpansionPanel>
+        }
+
+    </MudExpansionPanels>
+}
+else
+{
+    <MudText Typo="Typo.h6" Class="text-center">Không có lịch sử nào.</MudText>
+}

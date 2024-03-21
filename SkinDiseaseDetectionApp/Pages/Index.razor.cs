@@ -8,6 +8,7 @@ using MudBlazor;
 using SkinDiseaseDetectionApp.Constants;
 using SkinDiseaseDetectionApp.Dto;
 using SkinDiseaseDetectionApp.HttpClients.Interfaces;
+using SkinDiseaseDetectionApp.Services.Interfaces;
 
 namespace SkinDiseaseDetectionApp.Pages;
 
@@ -19,6 +20,8 @@ public partial class Index
     public ISkinDetectionClient _skinDetectionClient { get; set; }
     [Inject]
     public IDialogService DialogService { get; set; }
+    [Inject]
+    public IUserService userService { get; set; }
 
     public string Overview { get; set; }
     public Dictionary<string, string> SkinDiseasesDictionary { get; set; }
@@ -40,9 +43,12 @@ public partial class Index
      };
 
     public string SelectedModelType { get; set; }
+    public bool IsLogined { get; set; }
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
+        var userId = await userService.GetUserId();
+        IsLogined = userId != null;
         SkinDiseasesDictionary = GetSkinDiseasesDictionary();
         SelectedModelType = ModelTypes.First();
         base.OnInitialized();
@@ -66,7 +72,7 @@ public partial class Index
             { "File", args.File }
         };
 
-        var dialog = await DialogService.ShowAsync<CropDialog>("Vui lòng chọn kích cỡ ảnh là 150x200", parameters);
+        var dialog = await DialogService.ShowAsync<CropDialog>("Vui lòng chọn kích cỡ ảnh là 200x150", parameters);
         var result = await dialog.Result;
 
         if (!result.Canceled)
@@ -111,9 +117,23 @@ public partial class Index
         StateHasChanged();
     }
 
+    private void OnDeleteImageClick()
+    {
+        Base64Image = null;
+        StateHasChanged();
+    }
+
+
     private async Task OnContactClick()
     {
-        var dialog = await DialogService.ShowAsync<SaveProfileDialog>("Vui lòng điền thông tin");
+        var accuracy = (double)PredictionResult.Predictions.GetType().GetProperty(SelectedDiseaseKey).GetValue(PredictionResult.Predictions);
+        var parameters = new DialogParameters()
+        {
+            { "Image", Base64Image },
+            { "DiagnoseResult", PredictionResult.Result },
+            { "DiagnoseResultAccuracy", accuracy },
+        };
+        var dialog = await DialogService.ShowAsync<SaveProfileDialog>("Vui lòng điền thông tin", parameters);
         var result = await dialog.Result;
     }
 }

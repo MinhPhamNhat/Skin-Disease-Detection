@@ -1,12 +1,16 @@
+using Microsoft.JSInterop;
+using Newtonsoft.Json;
 using SkinDiseaseDetectionApp.HttpClients.Interfaces;
 using SkinDiseaseDetectionApp.Services.Interfaces;
 
 public class UserService : IUserService
 {
     private readonly ISkinDetectionClient _skinDetectionClient;
-    public UserService(ISkinDetectionClient skinDetectionClient)
+    private readonly IJSRuntime _jsRuntime;
+    public UserService(ISkinDetectionClient skinDetectionClient, IJSRuntime jsRuntime)
     {
         _skinDetectionClient = skinDetectionClient;
+        _jsRuntime = jsRuntime;
     }
 
     public async Task<bool> Register(UserDto user)
@@ -28,9 +32,11 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public Task<UserDetailDto> GetUserDetail(string userId)
+    public async Task<UserDetailDto> GetUserDetail()
     {
-        throw new NotImplementedException();
+        var userId = await GetUserId();
+        if (userId == null) return null;
+        return await _skinDetectionClient.Get<UserDetailDto>($"/api/Users/get_user_details/{userId}");
     }
 
     public Task<string> IsAuth()
@@ -38,8 +44,20 @@ public class UserService : IUserService
         throw new NotImplementedException();
     }
 
-    public Task UpdateUserAsync(UserDto user)
+    public async Task SaveUserDetail(UserHistory user)
     {
-        throw new NotImplementedException();
+        var updatedser = await _skinDetectionClient.Post<UserDetailDto>($"api/Users/create_history/{user.UserId}", ToDictionary(user));
+    }
+
+    public async Task<string> GetUserId()
+    {
+        return await _jsRuntime.InvokeAsync<string>("localStorage.getItem", "userId");
+    }
+
+    public static Dictionary<string, string> ToDictionary(object obj)
+    {
+        var json = JsonConvert.SerializeObject(obj);
+        var dictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        return dictionary;
     }
 }

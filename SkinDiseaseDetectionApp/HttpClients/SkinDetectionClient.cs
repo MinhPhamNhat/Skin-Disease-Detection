@@ -45,6 +45,19 @@ public class SkinDetectionClient : ISkinDetectionClient
         }
     }
 
+    public async Task<string> Post(string endpoint, Dictionary<string, string> request)
+    {
+        using (HttpContent formContent = new FormUrlEncodedContent(request))
+        {
+            using (HttpResponseMessage response = await _httpClient.PostAsync(endpoint, formContent).ConfigureAwait(false))
+            {
+                response.EnsureSuccessStatusCode();
+                var responseBody = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return responseBody;
+            }
+        }
+    }
+
     public async Task<TResponse> Put<TRequest, TResponse>(string endpoint, TRequest request)
     {
         string jsonRequest = JsonConvert.SerializeObject(request);

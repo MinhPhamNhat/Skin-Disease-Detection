@@ -19,9 +19,29 @@ main {
 .main {
     position: absolute;
     top: 0;
+    height: 100%;
+    width: 100%;
 }
 
 .bg-img {
     width: 100%;
     object-fit: cover;
+}
+
+.fact-component {
+    position: relative;
+    bottom: 0;
+}
+
+.logined{
+    position: absolute;
+    right: 0;
+    top: 0;
+    margin-right: 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    height: 64px;
 }

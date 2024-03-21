@@ -13,7 +13,7 @@
         <MudText Style="font-size: 12px; color: #7E99B4" Align="Align.Center">Tải ảnh của bạn lên đây để có thể chuẩn
             bệnh về da của
             bạn.
-            Ảnh nên rõ ràng, có kích thước 512x512 và định dạng PNG hoặc JPG </MudText>
+            Ảnh nên rõ ràng, có kích thước 200x150 và định dạng PNG hoặc JPG </MudText>
         <div class="d-flex gap-3 justify-center align-center">
             @if (string.IsNullOrEmpty(Base64Image))
             {
@@ -58,6 +58,8 @@
             else
             {
                 <img src="@Base64Image" style="max-width: 600px; max-height: 600px;" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Secondary" Size="Size.Small"
+                    OnClick="OnDeleteImageClick" />
             }
 
         </div>
@@ -86,8 +88,8 @@
     </div>
 
     <div class="d-flex flex-column align-center gap-4">
-        <MudExpansionPanels MultiExpansion="true" Class="w-100">
-            <MudExpansionPanel Class="w-100"
+        <MudExpansionPanels MultiExpansion="true" Class="w-100" >
+            <MudExpansionPanel Class="w-100" IsInitiallyExpanded="true"
                 Text="@(string.IsNullOrEmpty(SelectedDiseaseKey) ? "Kết quả" : ($"{SkinDiseasesDictionary[SelectedDiseaseKey]}"))">
                 @if (string.IsNullOrEmpty(SelectedDiseaseKey))
                 {
@@ -121,7 +123,7 @@
                     </MudText>
                 }
             </MudExpansionPanel>
-            <MudExpansionPanel Class="w-100" Text="Overview">
+            <MudExpansionPanel Class="w-100" Text="Overview" IsInitiallyExpanded="true">
                 @if (string.IsNullOrEmpty(SelectedDiseaseKey))
                 {
                     <MudText Style="font-size: 12px;" Class="d-flex align-center" Typo="Typo.caption">
@@ -147,7 +149,7 @@
             </MudExpansionPanel>
         </MudExpansionPanels>
 
-        @if (string.IsNullOrEmpty(SelectedDiseaseKey))
+        @if (IsLogined && !string.IsNullOrEmpty(SelectedDiseaseKey))
         {
             <MudButton Style="height: 50px; width: 150px;" Color="Color.Default" Size="Size.Small" OnClick="OnContactClick"
                 Variant="Variant.Outlined">
