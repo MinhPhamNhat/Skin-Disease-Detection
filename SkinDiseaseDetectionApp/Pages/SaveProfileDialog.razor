@@ -2,74 +2,158 @@
 @using MudBlazor;
 @using Cropper.Blazor.Models;
 
-<MudDialog>
+<MudDialog Style="height: 400px !important; width:600px !important;" ClassContent="w-100 h-100">
     <DialogContent>
-        <MudForm>
-            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="@UserDetail.Fullname" T="string" Label="Họ và tên" />
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudDatePicker @bind-Value="@UserDetail.DateOfBirth" Label="Ngày sinh" />
-                </MudItem>
-            </MudGrid>
+            <MudTabs @ref="@tabs" Outlined="true" MinimumTabWidth="20px" Position="Position.Left" Rounded="true" Border="true" ApplyEffectsToContainer="true" Class="h-100 w-100" PanelClass="w-100 h-100 pa-6">
+                <MudTabPanel Icon="@Icons.Material.Filled.EventNote" >
+                    <div class="d-flex flex-column gap-4">
+                        <div>
+                            <MudText Typo="Typo.h6">Lưu thông tin</MudText>
+                            <MudDivider />
+                        </div>
+                        <MudForm>
+                            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="@UserDetail.Fullname" T="string" Label="Họ và tên" />
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudDatePicker @bind-Date="@UserDetail.DateOfBirth" Label="Ngày sinh" MaxDate="DateTime.Now" />
+                                </MudItem>
+                            </MudGrid>
 
-            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="@UserDetail.Address" T="string" Label="Địa chỉ" />
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudRadioGroup @bind-Value="@UserDetail.Gender" T="bool">
-                        <MudRadio Value="true" Color="Color.Primary">Nam</MudRadio>
-                        <MudRadio Value="false" Color="Color.Primary">Nữ</MudRadio>
-                    </MudRadioGroup>
-                </MudItem>
-            </MudGrid>
-            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="UserDetail.Email" Mask="@RegexMask.Email()" Label="Email Address" T="string"
-                        HelperText="@RegexMask.Email().Mask" Variant="@Variant.Text" Clearable />
-                </MudItem>
-                <MudItem xs="12" sm="6">
-                    <MudTextField @bind-Value="UserDetail.PhoneNumber" T="string" Label="Số điện thoại" Adornment="Adornment.Start" AdornmentText="+84"
-                        Clearable HideSpinButtons="true" />
-                </MudItem>
-            </MudGrid>
-        </MudForm>
+                            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="@UserDetail.Address" T="string" Label="Địa chỉ" />
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudRadioGroup @bind-Value="@UserDetail.Gender" T="bool">
+                                        <MudRadio Value="true" Color="Color.Primary">Nam</MudRadio>
+                                        <MudRadio Value="false" Color="Color.Primary">Nữ</MudRadio>
+                                    </MudRadioGroup>
+                                </MudItem>
+                            </MudGrid>
+                            <MudGrid Class="justify-space-between" Style="max-width: 800px;">
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="UserDetail.Email" Mask="@RegexMask.Email()" Label="Email Address" T="string"
+                                        HelperText="@RegexMask.Email().Mask" Variant="@Variant.Text" Clearable />
+                                </MudItem>
+                                <MudItem xs="12" sm="6">
+                                    <MudTextField @bind-Value="UserDetail.PhoneNumber" T="string" Label="Số điện thoại" Adornment="Adornment.Start" AdornmentText="+84"
+                                        Clearable HideSpinButtons="true" />
+                                </MudItem>
+                            </MudGrid>
+                        </MudForm>
+                        <div class="d-flex gap-2 justify-end">
+                            <MudButton OnClick="SaveAndContactDoctor">Lưu kết quả và liên hệ</MudButton>
+                            <MudButton OnClick="Save" Color="Color.Primary">Lưu kết quả</MudButton>
+                        </div>
+                    </div>
+                </MudTabPanel>
+                <MudTabPanel Icon="@Icons.Material.Filled.ContactMail" >
+                    <div class="d-flex flex-column gap-3 w-100">
+                        <div>
+                            <MudText Typo="Typo.h6">Liên hệ bác sĩ</MudText>
+                            <MudDivider />
+                        </div>
+                        <div class="d-flex flex-column">
+                            <MudSelect ValueChanged="(string id) => DoctorSelect(id)" Dense="true" Value="@DoctorId" Label="Vui lòng chọn bác sĩ" Variant="Variant.Outlined">
+                                @foreach(var doctor in Doctors){
+                                    <MudSelectItem Value="@doctor.Id">
+                                        <div class="d-flex align-center gap-4">
+                                            <MudAvatar>
+                                                <MudImage Src="@doctor.Avartar"></MudImage>
+                                            </MudAvatar>
+                                            @doctor.Name
+                                        </div>
+                                    </MudSelectItem>
+                                }
+                            </MudSelect>
+                            @if(SelectedDoctor != null )
+                            {
+                                <MudCardHeader>
+                                    <CardHeaderAvatar>
+                                        <MudAvatar>
+                                            <MudImage Src="@SelectedDoctor.Avartar"></MudImage>
+                                        </MudAvatar>
+                                    </CardHeaderAvatar>
+                                    <CardHeaderContent>
+                                        <MudText Typo="Typo.body1">@SelectedDoctor.Name</MudText>
+                                        <MudText Typo="Typo.body1"><MudIcon Icon="@Icons.Material.Filled.Phone" Color="Color.Default" />@SelectedDoctor.PhoneNumber</MudText>
+                                        <MudText Typo="Typo.body2"><MudIcon Icon="@Icons.Material.Filled.Mail" Color="Color.Default" />@SelectedDoctor.Email</MudText>
+                                    </CardHeaderContent>
+                                </MudCardHeader>
+                            }
+                        </div>
+                        <MudTextField T="string" Label="Thông tin thêm" Variant="Variant.Outlined" @bind-Value="@Content" Lines="8" />
+                        <div class="d-flex gap-2 justify-end">
+                            <MudButton OnClick="Save">Gửi kết quả</MudButton>
+                        </div>
+                    </div>
+                </MudTabPanel>
+            </MudTabs>
     </DialogContent>
-    <DialogActions>
-        <MudButton>Lưu kết quả và liên hệ</MudButton>
-        <MudButton OnClick="Save" Color="Color.Primary">Lưu kết quả</MudButton>
-    </DialogActions>
 </MudDialog>
 
 @code {
+    [Inject] public Services.Interfaces.IUserService userService { get; set; }
+
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
     [Parameter] public string Image { get; set; }
     [Parameter] public string DiagnoseResult { get; set; }
     [Parameter] public double DiagnoseResultAccuracy { get; set; }
 
-    [Inject] public Services.Interfaces.IUserService userService { get; set; }
+    MudTabs tabs;
+    public string? DoctorId {get;set;}
+    public SkinDiseaseDetectionApi.Models.Doctor? SelectedDoctor {get;set;}
+    private string Content {get;set;}
 
-    private UserDetailDto? UserDetail { get; set; } = new UserDetailDto();
+    public List<SkinDiseaseDetectionApi.Models.Doctor> Doctors { get; set; } = new List<SkinDiseaseDetectionApi.Models.Doctor>();
+    private bool IsLoading {get;set;} = true;
 
-    protected override async Task OnInitializedAsync()
+
+    private UserDetailDto? UserDetail { get; set; } = new UserDetailDto()
     {
-        var userId = await userService.GetUserId();
-        UserDetail = await userService.GetUserDetail();
-        if (UserDetail == null){
-            UserDetail = new UserDetailDto()
-            {
-                Address ="",
-                DateOfBirth = DateTime.Now,
-                Email = "",
-                Fullname = "",
-                Gender = false,
-                PhoneNumber = "",
-                UserId = userId
-            };
+        Address ="",
+        DateOfBirth = DateTime.Now,
+        Email = "",
+        Fullname = "",
+        Gender = false,
+        PhoneNumber = ""
+    };
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender){
+            var userId = await userService.GetUserId();
+            UserDetail = await userService.GetUserDetail();
+            if (UserDetail == null){
+                UserDetail = new UserDetailDto()
+                {
+                    Address ="",
+                    DateOfBirth = DateTime.Now,
+                    Email = "",
+                    Fullname = "",
+                    Gender = false,
+                    PhoneNumber = "",
+                    UserId = userId
+                };
+            }
+            if (!UserDetail.DateOfBirth.HasValue) UserDetail.DateOfBirth = DateTime.Now;
+            IsLoading = false;
+            StateHasChanged();
+            await GetDoctors();
+            IsLoading = false;
         }
+    }
+
+    private void DoctorSelect(string doctorId){
+        DoctorId = doctorId;
+        SelectedDoctor = Doctors.FirstOrDefault(x => x.Id == doctorId);
+    }
+    
+    private async Task GetDoctors(){
+        Doctors = await userService.GetDoctors();
     }
 
     private async Task Save()
@@ -87,9 +171,16 @@
             Gender = UserDetail.Gender,
             PhoneNumber = UserDetail.PhoneNumber,
             UserId = UserDetail.UserId,
+            DoctorId = DoctorId,
+            Information = Content
         };
 
         await userService.SaveUserDetail(userHistory);
-        MudDialog.Close(DialogResult.Ok(true));
+        MudDialog.Close(DialogResult.Ok(false));
+    }
+
+    private async Task SaveAndContactDoctor()
+    {
+        tabs.ActivatePanel(1);
     }
 }

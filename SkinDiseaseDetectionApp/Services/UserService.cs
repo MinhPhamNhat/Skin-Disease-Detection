@@ -1,5 +1,6 @@
 using Microsoft.JSInterop;
 using Newtonsoft.Json;
+using SkinDiseaseDetectionApi.Models;
 using SkinDiseaseDetectionApp.HttpClients.Interfaces;
 using SkinDiseaseDetectionApp.Services.Interfaces;
 
@@ -39,6 +40,9 @@ public class UserService : IUserService
         return await _skinDetectionClient.Get<UserDetailDto>($"/api/Users/get_user_details/{userId}");
     }
 
+    public Task<List<Doctor>> GetDoctors(){
+        return _skinDetectionClient.Get<List<Doctor>>($"/Doctors");
+    }
     public Task<string> IsAuth()
     {
         throw new NotImplementedException();
@@ -46,7 +50,7 @@ public class UserService : IUserService
 
     public async Task SaveUserDetail(UserHistory user)
     {
-        var updatedser = await _skinDetectionClient.Post<UserDetailDto>($"api/Users/create_history/{user.UserId}", ToDictionary(user));
+        var updatedser = await _skinDetectionClient.Post($"api/Users/create_history/{user.UserId}", ToDictionary(user));
     }
 
     public async Task<string> GetUserId()

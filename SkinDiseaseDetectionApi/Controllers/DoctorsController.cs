@@ -20,6 +20,6 @@ public class DoctorsController : ControllerBase
     [HttpGet(Name = "GetDoctors")]
     public async Task<IEnumerable<Doctor>> Get()
     {
-        return _mongoDBService.GetAsync<Doctor>().Result;
+        return await _mongoDBService.GetAsync<Doctor>();
     }
 }

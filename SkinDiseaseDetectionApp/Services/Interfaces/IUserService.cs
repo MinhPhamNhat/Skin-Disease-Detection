@@ -1,4 +1,6 @@
 
+using SkinDiseaseDetectionApi.Models;
+
 namespace SkinDiseaseDetectionApp.Services.Interfaces;
 
 public interface IUserService
@@ -10,4 +12,6 @@ public interface IUserService
     Task<UserDetailDto> GetUserDetail();
     Task<string> GetUserId();
     Task<string> IsAuth();
+
+    Task<List<Doctor>> GetDoctors();
 }

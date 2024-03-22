@@ -22,6 +22,8 @@ public partial class Index
     public IDialogService DialogService { get; set; }
     [Inject]
     public IUserService userService { get; set; }
+    [Inject]
+    public ISnackbar Snackbar { get; set; }
 
     public string Overview { get; set; }
     public Dictionary<string, string> SkinDiseasesDictionary { get; set; }
@@ -133,7 +135,11 @@ public partial class Index
             { "DiagnoseResult", PredictionResult.Result },
             { "DiagnoseResultAccuracy", accuracy },
         };
-        var dialog = await DialogService.ShowAsync<SaveProfileDialog>("Vui lòng điền thông tin", parameters);
-        var result = await dialog.Result;
+        var dialog = await DialogService.ShowAsync<SaveProfileDialog>("", parameters, new DialogOptions() { NoHeader = true });
+        var result = (await dialog.Result);
+        if (result != null && !result.Cancelled && result.Data != null)
+        {
+            Snackbar.Add("Lưu thành công", Severity.Success);
+        };
     }
 }

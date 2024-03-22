@@ -12,4 +12,7 @@ public class UserHistory
     public DateTime DateCreated { get; set; }
     public string DiagnoseResult { get; set; }
     public double DiagnoseResultAccuracy { get; set; }
+
+    public string DoctorId { get; set; }
+    public string Information { get; set; }
 }
