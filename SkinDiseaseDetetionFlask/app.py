@@ -1,7 +1,6 @@
-import json
 from flask import Flask, jsonify, request
-from flask import current_app, g
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
+
 import SkinDieseaseDetection
 
 app = Flask(__name__)
