@@ -2,10 +2,6 @@ import json
 from flask import Flask, jsonify, request
 from flask import current_app, g
 from flask_cors import CORS, cross_origin
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-from flask_pymongo import PyMongo
-from werkzeug.local import LocalProxy
 import SkinDieseaseDetection
 
 app = Flask(__name__)

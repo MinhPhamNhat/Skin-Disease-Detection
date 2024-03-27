@@ -142,16 +142,17 @@ def save_model_weights(model):
 
 def predict_skin_disease(image_base64, model_name):
     if model_name == 'vgg16':
-        model = vgg16_tl_model
+        model = load_model_weights(vgg16_tl_model)
     
     if model_name == 'resnet50':
-        model = resnet50_tl_model
+        model = load_model_weights(resnet50_tl_model)
     
     if model_name == 'efficientnetb0':
-        model = efficientnetb0_tl_model
+        model = load_model_weights(efficientnetb0_tl_model)
     
     if model_name == 'vgg16_resnet50_efficientnetb0':
-        model = vgg16_resnet50_efficientnetb0_stacking_model
+        model = load_model_weights(vgg16_resnet50_efficientnetb0_stacking_model)
+        
     scaled_img = base64_to_rgb_image(image_base64)
     prediction = model.predict(np.array([scaled_img]))
     return (prediction[0], CLASSES, CLASSES[np.argmax(prediction)])
